@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Registro de Pagos</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+    body { font-family: Arial; margin: 20px; }
+    .card { padding: 20px; border: 1px solid #ccc; width: 300px; border-radius: 8px; }
+    label { font-weight: bold; display: block; margin-top: 10px; }
+    input, select { width: 100%; padding: 5px; margin-top: 5px; }
+    button { margin-top: 15px; padding: 10px; width: 100%; background: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 6px; }
+    button:hover { background: #45a049; }
+</style>
+</head>
+<body>
+
+<h2>Registro de Pago</h2>
+
+<div class="card">
+    <label>Empresa:</label>
+    <input type="text" id="empresa" placeholder="Ej: Robles S.A.">
+
+    <label>Monto:</label>
+    <input type="number" id="monto">
+
+    <label>Fecha:</label>
+    <input type="date" id="fecha">
+
+    <label>Método de Pago:</label>
+    <input type="text" id="metodo" placeholder="Ej: Tarjeta">
+
+    <label>Código de Transacción:</label>
+    <input type="text" id="codigo" placeholder="Ej: TX123456">
+
+    <button onclick="registrarPago()">Registrar Pago</button>
+</div>
+
+<script>
+let ventas = [];  // Acá guardamos temporalmente
+
+function registrarPago() {
+    const empresa = document.getElementById("empresa").value;
+    const monto = document.getElementById("monto").value;
+    const fecha = document.getElementById("fecha").value;
+    const metodo = document.getElementById("metodo").value;
+    const codigo = document.getElementById("codigo").value;
+
+    if (!empresa || !monto || !fecha) {
+        alert("Empresa, monto y fecha son obligatorios");
+        return;
+    }
+
+    const nuevaVenta = {
+        Empresa: empresa,
+        Monto: parseFloat(monto),
+        Fecha: fecha,
+        Metodo: metodo,
+        Codigo: codigo
+    };
+
+    ventas.push(nuevaVenta);
+
+    generarExcel();
+}
+
+function generarExcel() {
+    // Convertir datos a hoja Excel
+    const hoja = XLSX.utils.json_to_sheet(ventas);
+
+    const libro = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(libro, hoja, "Ventas");
+
+    // Descargar archivo
+    XLSX.writeFile(libro, "VentasRegistradas.xlsx");
+
+    alert("Pago registrado y guardado en Excel");
+}
+</script>
+
+</body>
+</html>
